@@ -1,0 +1,29 @@
+### GET request with a header
+GET http://localhost:3000
+Accept: application/json
+
+### Post Request
+POST http://localhost:3000
+Content-Type: application/json
+
+{
+  "id": 999,
+  "name": "content"
+}
+
+### Get Request with query
+GET http://localhost:3000/query/?id=1&name=jobeyer sheikh
+Accept: application/json
+
+### Get Request with parameter
+GET http://localhost:3000/param/01752062838
+Accept: application/json
+
+### Get Request with query-parameter
+GET http://localhost:3000/param-query/01752062838/?id=1&name=jobeyer sheikh
+Accept: application/json
+
+### Order Message Post
+POST http://localhost:3000/api/order-message
+Accept: application/json
+Content-Type: application/json
