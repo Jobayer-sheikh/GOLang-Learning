@@ -2,18 +2,21 @@ package main
 
 import (
 	"fiber/learning/controller"
+	"fiber/learning/rabbitmq"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"log"
 )
 
-type User struct {
-	Id    int32  `json:"id"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-}
-
 func main() {
+	if err := rabbitmq.NewPublisher(); err == nil {
+		log.Println("Successfully connected to RabbitMQ Publisher")
+	}
+
+	if err := rabbitmq.Subscribe(); err == nil {
+		log.Println("Successfully connected to RabbitMQ Subscribe")
+	}
+
 	app := fiber.New()
 
 	app.Static("/", "./public")
@@ -24,9 +27,11 @@ func main() {
 
 	web := app.Group("/api")
 	api := app.Group("/api/v1")
+	message := app.Group("/api/rabbitmq")
 
 	controller.OrderMessageControllerWeb(web)
 	controller.OrderMessageControllerApp(api)
+	controller.RabbitMQControllerWeb(message)
 
 	//var res = &User{
 	//	Id:    1,

@@ -16,9 +16,9 @@ func OrderMessageSendWebHandler(ctx *fiber.Ctx) error {
 }
 
 func getMessages(db *database.Database) *[]entity.OrderMessage {
-	var sqlStatement = `GetOrderMessages;`
+	var sqlStatement = "GetOrderMessages;"
 
-	result := database.FromSqlRaw[entity.OrderMessage](
+	result, _ := database.FromSqlRaw[entity.OrderMessage](
 		db,
 		sqlStatement,
 		func(result *entity.OrderMessage) []any {

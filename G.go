@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -36,7 +37,38 @@ func (r *FastReader) ReadInt() int {
 
 var reader = FastReader{Reader: bufio.NewReader(os.Stdin)}
 
-func __main__() {
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+//func dfs(root *TreeNode, sum int) int {
+//	if root == nil {
+//		return sum
+//	}
+//	ans := 0
+//	if root.Left != nil && root.Right != nil {
+//		x, y := dfs(root.Left, sum+1)+1, dfs(root.Right, sum+1)+1
+//		if x < y {
+//			ans = x
+//		} else {
+//			ans = y
+//		}
+//	} else if root.Left != nil {
+//		ans = dfs(root.Left, sum+1) + 1
+//	} else if root.Right != nil {
+//		ans = dfs(root.Right, sum+1) + 1
+//	}
+//
+//	return ans
+//}
+
+//func minDepth(root *TreeNode) int {
+//	return dfs(root, 1)
+//}
+
+func __man__() {
 
 	n := reader.ReadInt()
 	k := reader.ReadInt()
@@ -73,7 +105,7 @@ func __main__() {
 
 var mn int = -100000
 
-func max(a, b, c int) int {
+func max3(a, b, c int) int {
 	var mx = a
 	if mx < b {
 		mx = b
@@ -101,7 +133,7 @@ func run(idx int, diff int, rods []int, dp [][]int) int {
 	var x int = run(idx+1, diff, rods, dp)
 	var a int = rods[idx] + run(idx+1, diff+rods[idx], rods, dp)
 	var b int = rods[idx] + run(idx+1, diff-rods[idx], rods, dp)
-	dp[idx][diff+5000] = max(x, a, b)
+	dp[idx][diff+5000] = max3(x, a, b)
 
 	return dp[idx][diff+5000]
 }
@@ -156,11 +188,192 @@ func buddyStrings(s string, goal string) bool {
 	return s[index[0]] == goal[index[1]] && s[index[1]] == goal[index[0]]
 }
 
+/**
+ * Definition for a binary tree node.
+ * type TreeNode struct {
+ *     Val int
+ *     Left *TreeNode
+ *     Right *TreeNode
+ * }
+ */
+
+func dfs(t *TreeNode, k int, vis map[int]bool, ans *[]int) int {
+	if vis[t.Val] == true || k < 0 {
+		return 0
+	}
+
+	vis[t.Val] = true
+	if k == 0 {
+		*ans = append(*ans, t.Val)
+	}
+
+	*ans = append(*ans, t.Val)
+
+	if t.Left != nil {
+		return dfs(t.Left, k-1, vis, ans)
+	}
+
+	if t.Right != nil {
+		return dfs(t.Right, k-1, vis, ans)
+	}
+
+	return 0
+}
+
+func distanceK(root *TreeNode, target *TreeNode, k int) []int {
+	var ans []int
+	var vis map[int]bool = make(map[int]bool)
+
+	dfs(target, k, vis, &ans)
+	return ans
+}
+
+func canFinish(n int, p [][]int) bool {
+
+	var q = make([]int, 0)
+	var m = make(map[int]int)
+	var g = make(map[int][]int)
+
+	for i := 0; i < len(p); i++ {
+		m[p[i][1]]++
+		if _, ok := g[p[i][0]]; ok == false {
+			g[p[i][0]] = make([]int, 0)
+			g[p[i][0]] = append(g[p[i][0]], p[i][1])
+		} else {
+			g[p[i][0]] = append(g[p[i][0]], p[i][1])
+		}
+	}
+
+	var t = make(map[int]bool)
+	for i := 0; i < len(p); i++ {
+		if m[p[i][0]] == 0 && !t[p[i][0]] {
+			t[p[i][0]] = true
+			q = append(q, p[i][0])
+		}
+	}
+
+	var vis = 0
+	for len(q) != 0 {
+		var f = q[0]
+
+		vis++
+		q = q[1:]
+
+		if v, ok := g[f]; ok {
+			for i := 0; i < len(v); i++ {
+				var x = v[i]
+				m[x]--
+				if m[x] == 0 && !t[x] {
+					t[x] = true
+					q = append(q, x)
+				}
+			}
+		}
+	}
+
+	return vis == n
+}
+
+func eraseOverlapIntervals(a [][]int) int {
+
+	sort.Slice(a, func(i, j int) bool {
+		if a[i][0] == a[j][0] {
+			return a[i][1] < a[j][1]
+		}
+		return a[i][0] < a[j][0]
+	})
+
+	var sz, y, ans = len(a), a[0][1], 0
+
+	for i := 1; i < sz; i++ {
+
+		if y <= a[i][0] {
+			y = a[i][1]
+			continue
+		}
+
+		ans++
+		if y > a[i][1] {
+			y = a[i][1]
+		}
+	}
+
+	return ans
+}
+
+func absInt(a int) int {
+	if a < 0 {
+		return -a
+	}
+	return a
+}
+
+func asteroidCollision(a []int) []int {
+	var ans = make([]int, 1)
+
+	ans[0] = a[0]
+	for i := 1; i < len(a); i++ {
+		var sz = len(ans)
+		if sz == 0 {
+			ans = append(ans, a[i])
+			continue
+		}
+		var x = ans[sz-1]
+		if x >= 0 && a[i] < 0 {
+			if x > absInt(a[i]) {
+				continue
+			} else if x < absInt(a[i]) {
+				var ok bool = false
+
+				for len(ans) > 0 {
+					sz = len(ans)
+					if ans[sz-1] < 0 || a[i] >= 0 {
+						ok = true
+						break
+					}
+					if absInt(ans[sz-1]) > absInt(a[i]) {
+						ok = false
+						break
+					} else if absInt(ans[sz-1]) < absInt(a[i]) {
+						ok = true
+						ans = ans[0 : sz-1]
+					} else {
+						ok = false
+						ans = ans[0 : sz-1]
+						break
+					}
+				}
+
+				if ok {
+					ans = append(ans, a[i])
+				}
+
+			} else {
+				ans = ans[0 : sz-1]
+			}
+		} else {
+			ans = append(ans, a[i])
+		}
+	}
+
+	return ans
+}
+
 func main() {
 	//cas := reader.ReadInt()
 	//for i := 0; i < cas; i++ {
 	//	__main__()
 	//}
+
+	var e = []int{-2, -2, 1, -2}
+	asteroidCollision(e)
+
+	var r [][]int = [][]int{{0, 2}, {1, 3}, {2, 4}, {3, 5}, {4, 6}}
+	eraseOverlapIntervals(r)
+
+	var g [][]int = [][]int{{1, 4}, {2, 4}, {3, 1}, {3, 2}}
+
+	canFinish(5, g)
 
 	fmt.Println(buddyStrings("ab", "ba"))
 
