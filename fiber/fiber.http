@@ -37,3 +37,30 @@ Content-Type: application/json
 GET http://localhost:3000/api/order-message/?page=1&limit=20&orderId=1&customerId=1&lineOfBusiness=1
 Accept: application/json
 Content-Type: application/json
+
+### Post Order Message
+POST http://localhost:3000/api/order-message
+Content-Type: application/json
+
+{
+  "orderId": 1,
+  "customerId": 1,
+  "lineOfBusiness": 2,
+  "phone": "01752062838",
+  "orderStatus": "Success",
+  "text": "Hello",
+  "delivered": true
+}
+
+### Check Brac Net API
+
+POST https://sms.bracnet.net/smsapi
+Content-Type: application/json
+
+{
+  "api_key" : "C3000010644cf4bc808c37.91444038",
+  "senderid" : "8809677399956",
+  "type" : "text/unicode",
+  "msg" : "Hello World",
+  "contacts" : "8801752062838"
+}

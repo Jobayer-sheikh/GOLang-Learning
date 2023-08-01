@@ -43,6 +43,7 @@ func Subscribe() error {
 			var message = d.Body
 			var actionType = d.Headers["actionType"]
 
+			go ParseCommandAction(actionType, message)
 			log.Printf("Received a message: %s %s\n", message, actionType)
 		}
 	}()

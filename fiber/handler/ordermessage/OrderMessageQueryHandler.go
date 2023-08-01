@@ -16,8 +16,8 @@ func (query *OrderMessageQuery) Handle(ctx *fiber.Ctx) (*[]entity.OrderMessage, 
 }
 
 func getMessages(db *database.Database, orderId int64) (*[]entity.OrderMessage, error) {
-	var sqlStatement = "[pfo].GetOrderMessages @OrderId;"
-	var sqlParameter = []any{sql.NamedArg{Name: "OrderId", Value: orderId}}
+	var sqlStatement = "[pfo].[GetOrderMessages] :OrderId"
+	var sqlParameter = []any{sql.Named("OrderId", orderId)}
 
 	result, err := database.FromStoredProcedure[entity.OrderMessage](
 		db,

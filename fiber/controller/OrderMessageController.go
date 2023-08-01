@@ -28,7 +28,7 @@ func OrderMessageControllerWeb(router fiber.Router) {
 		}
 
 		res, _ := command.Handle(ctx)
-		return ctx.JSON(response.OK[*entity.OrderMessage](&res))
+		return ctx.JSON(response.OK[*response.GenericResponse[int64]](&res))
 	})
 }
 
