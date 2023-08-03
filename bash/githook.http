@@ -1,0 +1,11 @@
+### Hook Api check
+GET http://localhost:6000/api/hook/push
+Accept: application/json
+
+### Hook Api check
+POST http://localhost:6000/api/hook/push
+Accept: application/json
+
+### Hook Api check
+GET https://61b4-103-25-248-235.ngrok.io/api/hook/push
+Accept: application/json
