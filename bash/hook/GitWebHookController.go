@@ -9,11 +9,13 @@ type Response struct {
 }
 
 func GitWebHookController(router fiber.Router) {
-	router.Get("/hook/push", func(ctx *fiber.Ctx) error {
+	router.Post("/notification-service/hook/push", func(ctx *fiber.Ctx) error {
+		NotificationServiceHandler(ctx)
 		return ctx.JSON(&Response{Success: true})
 	})
 
-	router.Post("/hook/push", func(ctx *fiber.Ctx) error {
+	router.Post("/premium-fruits/hook/push", func(ctx *fiber.Ctx) error {
+		go PremiumFruitHandler(ctx)
 		return ctx.JSON(&Response{Success: true})
 	})
 }

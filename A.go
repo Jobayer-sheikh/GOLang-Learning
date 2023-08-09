@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func absNUmber(v int) int {
@@ -29,59 +30,46 @@ func minNumber(a, b int) int {
 
 var rd = bufio.NewReader(os.Stdin)
 
+func replace(s *string, idx int, c rune) *string {
+	if idx == 0 {
+		*s = string(c) + (*s)[idx+1:]
+	} else if idx+1 == len(*s) {
+		*s = (*s)[0:idx] + string(c)
+	} else {
+		*s = (*s)[:idx] + string(c) + (*s)[idx+1:]
+	}
+
+	return s
+}
+
 func __main__() string {
-	var n, k int
-	fmt.Fscan(rd, &n, &k)
 
-	var c []int = make([]int, n)
-	for i := 0; i < n; i++ {
-		fmt.Fscan(rd, &c[i])
+	var s string
+	fmt.Fscan(rd, &s)
+
+	var sz, f, h = len(s), -1, 0
+
+	for i := sz - 1; i >= 0; i-- {
+		if int(s[i])+h >= '5' {
+			f = i
+			h = 1
+		} else {
+			h = 0
+		}
 	}
 
-	var sz = len(c)
-	if c[0] == c[sz-1] {
-		var s int = 0
-		for i := 0; i < n; i++ {
-			if c[i] == c[0] {
-				s++
-			}
-		}
-
-		if s >= k {
-			return "YES"
-		}
-
-		return "NO"
+	if h == 1 {
+		return "1" + strings.Repeat("0", sz)
 	}
 
-	var x, y = 0, 0
-	var l, r = 0, sz - 1
+	if f >= 0 {
+		var t = s[0:f]
 
-	for l < sz {
-		if c[l] == c[0] {
-			x++
-		}
-		if x == k {
-			break
-		}
-		l++
+		var c string = *replace(&t, f-1, rune(s[f-1])+1)
+		return c + strings.Repeat("0", sz-f)
 	}
 
-	for r >= 0 {
-		if c[r] == c[sz-1] {
-			y++
-		}
-		if y == k {
-			break
-		}
-		r--
-	}
-
-	if x == k && y == k && l < r {
-		return "YES"
-	}
-
-	return "NO"
+	return s
 }
 
 func main() {

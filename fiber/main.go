@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fiber/learning/config"
 	"fiber/learning/controller"
+	"fiber/learning/env"
 	"fiber/learning/rabbitmq"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
@@ -9,6 +11,10 @@ import (
 )
 
 func main() {
+	var environment = env.GetEnvironment(env.EnvironmentVariable)
+
+	config.ReadConfigFile(environment)
+
 	if err := rabbitmq.NewPublisher(); err == nil {
 		log.Println("Successfully connected to RabbitMQ Publisher")
 	}
